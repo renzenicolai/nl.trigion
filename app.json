@@ -9,6 +9,15 @@
         "name": "Emile Nijssen",
         "email": "emile@athom.nl"
     },
+    "description": {
+	    "en": "Trigion scheduler",
+	    "nl": "Trigion alarmwijziging"
+    },
+    "category": [ "security" ],
+    "images": {
+	    "large": "./assets/images/large.png",
+	    "small": "./assets/images/small.png"
+    },
     "flow": {
 	    "actions": [
 		    {
