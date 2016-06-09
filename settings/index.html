@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+	<head>
+
+		<script type="text/javascript">
+        function onHomeyReady(){
+
+	        Homey.get('user', function( err, user ){
+			   if( err ) return Homey.alert(err.message || err.toString(), 'error');
+
+		        var usernameEl 	= document.getElementById('username');
+		        var passwordEl 	= document.getElementById('password');
+		        var submitEl	= document.getElementById('submit');
+
+				if( user && user.username ) usernameEl.value = user.username;
+				if( user && user.password ) passwordEl.value = user.password;
+
+		        document.getElementById('login').addEventListener('submit', function(e){
+			        e.preventDefault();
+
+			        submitEl.classList.add('loading');
+			        submitEl.disabled = 'disabled';
+
+					Homey.set('user', {
+					   username: usernameEl.value,
+					   password: passwordEl.value
+					}, function( err, result ){
+					   if( err ) return Homey.alert(err.message || err.toString(), 'error');
+					   Homey.alert('Saved!', 'info');
+
+					   submitEl.classList.remove('loading');
+				       submitEl.removeAttribute('disabled');
+					})
+			    });
+	        })
+
+            Homey.ready()
+        }
+		</script>
+
+	</head>
+	<body>
+
+		<h1>Account</h1>
+
+		<form id="login">
+
+			<p>
+				<label for="username">E-mail</label>
+				<input type="text" id="username" />
+			</p>
+
+			<p>
+				<label for="password">Password</label>
+				<input type="password" id="password" />
+			</p>
+
+			<p>
+				<input type="submit" id="submit" value="Login" class="button" />
+			</p>
+
+		</form>
+
+	</body>
+</html>

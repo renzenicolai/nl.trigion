@@ -1,0 +1,46 @@
+{
+    "id": "nl.trigion",
+    "name": {
+        "en": "Trigion"
+    },
+    "version": "0.0.1",
+    "compatibility": "0.x || 1.x",
+    "author": {
+        "name": "Emile Nijssen",
+        "email": "emile@athom.nl"
+    },
+    "flow": {
+	    "actions": [
+		    {
+			    "id": "schedule",
+			    "title": {
+				    "en": "Schedule the alarm",
+				    "nl": "Stel het alarm in"
+			    },
+			    "args": [
+				    {
+					    "name": "time",
+					    "type": "time"
+				    }
+			    ]
+		    },
+		    {
+			    "id": "scheduleRelative",
+			    "title": {
+				    "en": "Schedule the alarm # hours from now",
+				    "nl": "Schakel het alarm # uur vanaf nu in"
+			    },
+			    "args": [
+				    {
+					    "name": "addHours",
+					    "type": "number",
+					    "placeholder": {
+						    "en": "In hours",
+						    "nl": "Aantal uur"
+					    }
+				    }
+			    ]
+		    }
+	    ]
+    }
+}
