@@ -87,7 +87,26 @@ Trigion.prototype.setAlarm = function( opts, callback ){
 		if( err ) return callback( err );
 		return callback( null, body );
 	})
-
 }
+
+Trigion.prototype.getAlarm = function( opts, callback ){
+
+	opts = extend({
+		"alarm_id": "1",
+		"reference": "0"
+	}, opts);
+
+	this.api( 'GET', '/GetObjectSchedules?AuthType=Direct&Reference='+opts.reference, null,
+    function( err, result, body ){
+		try {
+			body = JSON.parse(body);
+		} catch(e){}
+		
+		if( body && body.Error ) return callback( body );
+		return callback( err, result, body );
+    })
+}
+
+
 
 module.exports = Trigion;

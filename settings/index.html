@@ -4,12 +4,18 @@
 
 		<script type="text/javascript">
         function onHomeyReady(){
+        
+            Homey.get('auto_refresh', function( err, refresh) {
+                var auto_refreshEl 	= document.getElementById('auto_refresh');
+                if (refresh) auto_refreshEl.value = refresh;
+            })
 
 	        Homey.get('user', function( err, user ){
 			   if( err ) return Homey.alert(err.message || err.toString(), 'error');
 
 		        var usernameEl 	= document.getElementById('username');
 		        var passwordEl 	= document.getElementById('password');
+		        var auto_refreshEl 	= document.getElementById('auto_refresh');
 		        var submitEl	= document.getElementById('submit');
 
 				if( user && user.username ) usernameEl.value = user.username;
@@ -21,6 +27,8 @@
 			        submitEl.classList.add('loading');
 			        submitEl.disabled = 'disabled';
 
+			        Homey.set('auto_refresh', parseInt(auto_refreshEl.value));
+			        
 					Homey.set('user', {
 					   username: usernameEl.value,
 					   password: passwordEl.value
@@ -40,11 +48,9 @@
 
 	</head>
 	<body>
-
-		<h1>Account</h1>
-
 		<form id="login">
 
+            <h1>Account</h1>
 			<p>
 				<label for="username">E-mail</label>
 				<input type="text" id="username" />
@@ -54,9 +60,23 @@
 				<label for="password">Password</label>
 				<input type="password" id="password" />
 			</p>
+			
+			<h1>Settings</h1>
+			<p>
+                <label for="auto_refresh">Poll alarm setpoint every...</label>
+                <select id="auto_refresh">
+                    <option value="0">disabled</option>
+                    <option value="1">minute</option>
+                    <option value="5">5 minutes</option>
+                    <option value="15">15 minutes</option>
+                    <option value="60">hour</option>
+                </select
+                <br />
+                Warning: triggers will not function if this option is set to disabled
+			</p>
 
 			<p>
-				<input type="submit" id="submit" value="Login" class="button" />
+				<input type="submit" id="submit" value="Save" class="button" />
 			</p>
 
 		</form>

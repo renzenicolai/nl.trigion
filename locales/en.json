@@ -1,3 +1,5 @@
 {
-	"not_logged_in": "Not logged in"
+	"not_logged_in": "Not logged in",
+	"can_not_log_in": "An error occured while logging in",
+	"can_not_get_objects": "Kan de lijst met objecten niet opvragen"
 }
