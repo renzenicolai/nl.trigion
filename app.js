@@ -1,28 +1,28 @@
-'use strict';
+"use strict";
 
-const Homey = require('homey');
-const Trigion = require('trigion');
+const Homey = require("homey");
+const Trigion = require("trigion");
 
 class TrigionApp extends Homey.App {
-	
+
 	onInit() {
 		this.alarm_previous_setpoint = new Date(0);
 		this.alarm_current_setpoint = new Date(0); //Before querying the server we assume the alarm is set to epoch
 				
 		let settings = Homey.ManagerSettings;
-		this.user = settings.get('user');
+		this.user = settings.get("user");
 				
 		if (!this.user) {
-			this.log('Not logged in.');
-			return callback( new Error( __('not_logged_in') ) );
+			this.log("Can not start application: no login information provided!");
+			return;
 		}
 		
-		let scheduleAction = new Homey.FlowCardAction('schedule');
+		let scheduleAction = new Homey.FlowCardAction("schedule");
 		scheduleAction
 			.register()
 			.registerRunListener(( args, state ) => {
 				var now = new Date();
-				args.time = args.time.split(':');
+				args.time = args.time.split(":");
 				var alarmTime = new Date( now.getFullYear(), now.getMonth(), now.getDate(), args.time[0], args.time[1] );
 				
 				if( alarmTime < now ) {
@@ -38,7 +38,7 @@ class TrigionApp extends Homey.App {
 				return Promise.resolve( status );
 			});
 		
-		let scheduleRelativeAction = new Homey.FlowCardAction('scheduleRelative');
+		let scheduleRelativeAction = new Homey.FlowCardAction("scheduleRelative");
 		scheduleRelativeAction
 			.register()
 			.registerRunListener(( args, state ) => {
@@ -56,25 +56,25 @@ class TrigionApp extends Homey.App {
 				return Promise.resolve( status );
 			});
 			
-		let alarmStateCondition = new Homey.FlowCardCondition('alarm_state');
+		let alarmStateCondition = new Homey.FlowCardCondition("alarm_state");
 		alarmStateCondition
 			.register()
 			.registerRunListener(( args, state ) => {
 				let active = this.alarmCheckActive(new Date());
 				return Promise.resolve( active );
-			})
+			});
 			
-		let alarmSetpointBeforeRelativeCondition = new Homey.FlowCardCondition('alarm_setpoint_before_relative');
+		let alarmSetpointBeforeRelativeCondition = new Homey.FlowCardCondition("alarm_setpoint_before_relative");
 		alarmSetpointBeforeRelativeCondition
 			.register()
 			.registerRunListener(( args, state ) => {
 				let active = this.alarmCheckActive(new Date((new Date()).getTime() + (args.time*60*60*1000)));
 				return Promise.resolve( active );
-			})
+			});
 					
 		this.statusUpdate();
 		this.timerStart();
-		this.log('Trigion app has been started.');
+		this.log("Trigion app has been started.");
 	}
 	
 	alarmSet( alarmTime, callback ) {
@@ -93,14 +93,14 @@ class TrigionApp extends Homey.App {
 					endTime		: alarmTime
 				}, ( err, result ) => {
 					if( err ) return callback(err.Error.ErrorText);
-					if( result.ResultCode === 'Ok' ) {
+					if( result.ResultCode === "Ok" ) {
 						return callback( null, true );
 					} else {
 						return callback( result.ResultText );
 					}
-				})
-			})
-		})
+				});
+			});
+		});
 	}
 	
 	alarmGet( callback ) {
@@ -117,12 +117,12 @@ class TrigionApp extends Homey.App {
 					reference: result[0].AlarmObjects[0].R
 				}, ( err, result, body ) => {
 					if( err ) return console.error(err);
-					var endTime = new Date(body[0]['EndTime']*1000);
+					var endTime = new Date(body[0].EndTime*1000);
 					endTime.setSeconds(0);
 					return callback( null, endTime );   
 				});
-			})
-		})
+			});
+		});
 	}
 	
 	alarmCheckActive(when) {
@@ -141,17 +141,17 @@ class TrigionApp extends Homey.App {
 				this.log("Error while updating alarm setpoint: "+err);
 			} else {
 				this.alarm_current_setpoint = result;
-				if ((this.alarm_previous_setpoint.getTime()==this.alarm_current_setpoint.getTime())||(this.alarm_previous_setpoint.getTime()==0)) {
+				if ((this.alarm_previous_setpoint.getTime()==this.alarm_current_setpoint.getTime())||(this.alarm_previous_setpoint.getTime()===0)) {
 					this.log("Alarm setpoint did not change: "+this.alarm_current_setpoint);
 				} else {
 					this.log("Alarm setpoint updated: "+this.alarm_current_setpoint);
 					var tokens = { "time": this.alarm_current_setpoint.getHours()+":"+this.alarm_current_setpoint.getMinutes() };
-					let setpointChangedTrigger = new Homey.FlowCardTrigger('setpoint_changed');
+					let setpointChangedTrigger = new Homey.FlowCardTrigger("setpoint_changed");
 					setpointChangedTrigger
 						.register()
 						.trigger( tokens )
 							.catch( this.error )
-							.then( this.log("Trigger: setpoint changed") )
+							.then( this.log("Trigger: setpoint changed") );
 				}
 				this.alarm_previous_setpoint = this.alarm_current_setpoint;
 			}
@@ -160,13 +160,13 @@ class TrigionApp extends Homey.App {
 	
 	timerStart() {
 		let settings = Homey.ManagerSettings;
-		var refresh_interval = settings.get('auto_refresh');
-		if (typeof this.update_interval !== 'undefined' && typeof this.update_interval !== 'undefined') {
+		var refresh_interval = settings.get("auto_refresh");
+		if (typeof this.update_interval !== "undefined" && typeof this.update_interval !== "undefined") {
 			clearInterval(this.update_interval); // clear running interval
-			this.log('Interval disabled');
+			this.log("Interval disabled");
 		}
 		
-		if (typeof refresh_interval == 'number' && refresh_interval > 0) {
+		if (typeof refresh_interval == "number" && refresh_interval > 0) {
 			this.update_interval = setInterval(() => {
 				this.statusUpdate();
 			}, 60000 * refresh_interval);
