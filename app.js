@@ -9,8 +9,7 @@ class TrigionApp extends Homey.App {
 		this.alarm_previous_setpoint = new Date(0);
 		this.alarm_current_setpoint = new Date(0); //Before querying the server we assume the alarm is set to epoch
 				
-		let settings = Homey.ManagerSettings;
-		this.user = settings.get("user");
+		this.user = Homey.ManagerSettings.get("user");
 				
 		if (!this.user) {
 			this.log("Can not start application: no login information provided!");
@@ -30,7 +29,7 @@ class TrigionApp extends Homey.App {
 				}
 				
 				var status = false;
-				this.log("Absolute reschedule to "+alarmTime);
+				this.log("Absolute reschedule to ", alarmTime);
 				this.alarmSet( alarmTime, (err, result) => {
 					if ( !err ) status = result;
 				});
@@ -159,8 +158,7 @@ class TrigionApp extends Homey.App {
 	}
 	
 	timerStart() {
-		let settings = Homey.ManagerSettings;
-		var refresh_interval = settings.get("auto_refresh");
+		var refresh_interval = Homey.ManagerSettings.get("auto_refresh");
 		if (typeof this.update_interval !== "undefined" && typeof this.update_interval !== "undefined") {
 			clearInterval(this.update_interval); // clear running interval
 			this.log("Interval disabled");
